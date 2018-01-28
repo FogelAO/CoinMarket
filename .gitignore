@@ -26,3 +26,4 @@ app/src/androidTest/
 app/src/main/java/fogelao/com/github/coinmarket/ui/ticker/
 app/src/test/
 /.idea/sonarlint/
+.idea
