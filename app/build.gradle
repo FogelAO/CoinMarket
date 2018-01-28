@@ -1,7 +1,5 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
 
 android {
@@ -22,6 +20,10 @@ android {
     }
 }
 
+kapt {
+    generateStubs true
+}
+
 dependencies {
     ext {
         supportVersion = "26.1.0"
@@ -32,15 +34,19 @@ dependencies {
     }
 
 
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     //  Support
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation "com.android.support:recyclerview-v7:${supportVersion}"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 
     //RxJava
     implementation 'io.reactivex.rxjava2:rxjava:2.1.6'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation "com.squareup.retrofit2:converter-gson:${rxJavaGsonConverter}"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:${rxJavaAdapter}"
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     //Gson
@@ -51,4 +57,15 @@ dependencies {
     //Dagger
     implementation "com.google.dagger:dagger:${daggerVersion}"
     kapt "com.google.dagger:dagger-compiler:${daggerVersion}"
+    //Date
+    implementation 'joda-time:joda-time:2.9.9'
+
+    //Room
+    compile "android.arch.persistence.room:runtime:1.0.0-alpha5"
+    kapt "android.arch.persistence.room:compiler:1.0.0-alpha5"
+    compile "android.arch.persistence.room:rxjava2:1.0.0-alpha5"
+
+    //Graphic
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+
 }
