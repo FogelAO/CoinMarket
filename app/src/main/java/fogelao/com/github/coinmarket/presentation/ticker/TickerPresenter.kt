@@ -5,6 +5,8 @@ import com.arellomobile.mvp.InjectViewState
 import fogelao.com.github.coinmarket.di.DI
 import fogelao.com.github.coinmarket.model.interactor.HistoryInteractor
 import fogelao.com.github.coinmarket.presentation.global.BasePresenter
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import javax.inject.Inject
 
 
@@ -23,9 +25,13 @@ class TickerPresenter : BasePresenter<TickerView>() {
         DI.componentManager().appComponent.inject(this)
     }
 
-    fun getHistory(symbolId: String, periodId: String, timeStart: String) {
+    fun getHistory(quoteId: String = "USD", periodId: String, timeStart: DateTime) {
         historyInteractor
-                .getHistory(symbolId, periodId, timeStart)
+                .getHistory(
+                        getSymbolId(baseId = ticker.symbol),
+                        periodId,
+                        getTimeStart(timeStart)
+                )
                 .doOnSubscribe { viewState.showProgress(true) }
                 .doAfterTerminate { viewState.showProgress(false) }
                 .subscribe(
@@ -36,6 +42,18 @@ class TickerPresenter : BasePresenter<TickerView>() {
     }
 
     fun refresh() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        viewState.showRefreshing(false)
     }
+
+
+    private fun getSymbolId(exchangeId: String = "BITSTAMP", baseId: String = "BTC", quoteId: String = "USD") =
+            exchangeId + "_SPOT_" + baseId + "_" + quoteId
+
+
+    private fun getTimeStart(timeStart: DateTime): String {
+        val patternFormat = DateTimeFormat.forPattern("yyyy-MM-dd")
+
+        return timeStart.toString(patternFormat)
+    }
+
 }

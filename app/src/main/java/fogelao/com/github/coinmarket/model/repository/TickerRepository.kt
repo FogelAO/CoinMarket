@@ -49,7 +49,7 @@ class TickerRepository @Inject constructor(
             .doOnSuccess { saveToDBAndUpdateTime(it) }
             .observeOn(schedulers.ui())
 
-    fun getHistory(symbolId: String, periodId: String, timeStart: String): Single<List<HistoryItem>> = historyApi.getHistory(timeStart = timeStart)
+    fun getHistory(symbolId: String, periodId: String, timeStart: String): Single<List<HistoryItem>> = historyApi.getHistory(symbolId, periodId, timeStart)
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
@@ -64,7 +64,8 @@ class TickerRepository @Inject constructor(
         }
 
         if (LocalDate.now().compareTo(LocalDate(date)) == 0) {
-            return true // Данные актуальны
+            if (DateTime.now().hourOfDay() == date!!.hourOfDay())
+                return true // Данные актуальны
         }
 
         return false

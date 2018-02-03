@@ -3,9 +3,9 @@ package fogelao.com.github.coinmarket.ui.graph
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.WindowManager
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -15,8 +15,10 @@ import fogelao.com.github.coinmarket.entity.view.TickerView
 import fogelao.com.github.coinmarket.extensions.toast
 import fogelao.com.github.coinmarket.presentation.ticker.TickerPresenter
 import kotlinx.android.synthetic.main.activity_ticker_info.*
+import kotlinx.android.synthetic.main.default_toolbar.*
 import org.joda.time.DateTime
 import java.util.*
+
 
 class TickerInfoActivity : AppCompatActivity(), fogelao.com.github.coinmarket.presentation.ticker.TickerView {
     companion object {
@@ -29,7 +31,12 @@ class TickerInfoActivity : AppCompatActivity(), fogelao.com.github.coinmarket.pr
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         setContentView(R.layout.activity_ticker_info)
+        setSupportActionBar(toolbar)
+
+        swipeRefreshLayout.setOnRefreshListener { }
 
         if (intent.getSerializableExtra(TICKER_TAG) == null) {
             toast("Unknown error occurred")
@@ -37,14 +44,14 @@ class TickerInfoActivity : AppCompatActivity(), fogelao.com.github.coinmarket.pr
         }
 
         val ticker = intent.getSerializableExtra(TICKER_TAG) as TickerView
+        toolbar.title = ticker.name
 
         presenter.attachView(this)
         presenter.ticker = ticker
 
-        val timeStart = DateTime.now().toDateTimeISO()
-        Log.d(TICKER_TAG, "timeStart=$timeStart")
+        val timeStart = DateTime.now().minusDays(7)
 
-        presenter.getHistory("", "", "")
+        presenter.getHistory(periodId = "1DAY", timeStart = timeStart)
 
         swipeRefreshLayout.setOnRefreshListener { presenter.refresh() }
     }
@@ -53,6 +60,11 @@ class TickerInfoActivity : AppCompatActivity(), fogelao.com.github.coinmarket.pr
     override fun showHistoryData(items: List<HistoryItem>) {
         lineChart.visibility = VISIBLE
         lineChart.clear()
+
+        if (items.isEmpty()) {
+            toast("Server error occurred")
+            onBackPressed()
+        }
 
         val entries = ArrayList<Entry>()
 
@@ -69,11 +81,10 @@ class TickerInfoActivity : AppCompatActivity(), fogelao.com.github.coinmarket.pr
 
 
         val dataSet = LineDataSet(entries, "Price USD")
-        dataSet.lineWidth = 2f
+        dataSet.lineWidth = 3f
         dataSet.color = Color.rgb(29, 247, 14)
 
         val lineData = LineData(dataSet)
-        lineData.setValueTextSize(1.6f)
         lineChart.data = lineData
         lineChart.invalidate()
     }

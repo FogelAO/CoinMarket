@@ -14,7 +14,7 @@ interface HistoryApi {
     }
 
 
-    @GET("/v1/ohlcv/{symbol_id}/history?apikey=$API_KEY")
+    @GET("v1/ohlcv/{symbol_id}/history?apikey=$API_KEY")
     fun getHistory(
             @Path("symbol_id") symbolId: String = "BITSTAMP_SPOT_BTC_USD",
             @Query("period_id") periodId: String = "1DAY",
