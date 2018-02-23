@@ -1,23 +1,19 @@
-package fogelao.com.github.coinmarket.ui.graph
+package fogelao.com.github.coinmarket.ui.ticker
 
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.WindowManager
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
 import fogelao.com.github.coinmarket.R
 import fogelao.com.github.coinmarket.entity.api.HistoryItem
 import fogelao.com.github.coinmarket.entity.view.TickerView
 import fogelao.com.github.coinmarket.extensions.toast
 import fogelao.com.github.coinmarket.presentation.ticker.TickerPresenter
+import fogelao.com.github.coinmarket.ui.ticker.graph.GraphFragment
+import fogelao.com.github.coinmarket.ui.ticker.info.TickerInfoFragment
 import kotlinx.android.synthetic.main.activity_ticker_info.*
 import kotlinx.android.synthetic.main.default_toolbar.*
-import org.joda.time.DateTime
-import java.util.*
 
 
 class TickerInfoActivity : AppCompatActivity(), fogelao.com.github.coinmarket.presentation.ticker.TickerView {
@@ -47,52 +43,58 @@ class TickerInfoActivity : AppCompatActivity(), fogelao.com.github.coinmarket.pr
         toolbar.title = ticker.name
 
         presenter.attachView(this)
-        presenter.ticker = ticker
 
-        val timeStart = DateTime.now().minusDays(7)
+        val adapter = ViewPageAdapter(supportFragmentManager)
 
-        presenter.getHistory(periodId = "1DAY", timeStart = timeStart)
+        val bundle = Bundle()
+        bundle.putSerializable(TickerView.TAG, ticker)
 
-        swipeRefreshLayout.setOnRefreshListener { presenter.refresh() }
+        adapter.addFragment(TickerInfoFragment.newInstance(bundle), "Info")
+        adapter.addFragment(GraphFragment.newInstance(bundle), "Graph")
+
+        viewpager.adapter = adapter
+
+        tabs.setupWithViewPager(viewpager)
     }
 
 
-    override fun showHistoryData(items: List<HistoryItem>) {
-        lineChart.visibility = VISIBLE
-        lineChart.clear()
+    override fun showHistoryData(entries: List<HistoryItem>) {
 
-        if (items.isEmpty()) {
-            toast("Server error occurred")
-            onBackPressed()
-        }
-
-        val entries = ArrayList<Entry>()
-
-//        for (i in 0..20){
-//            entries.add(Entry(i.toFloat(), Random().nextFloat()))
+//        lineChart.visibility = VISIBLE
+//        lineChart.clear()
+//
+//        if (items.isEmpty()) {
+//            toast("Server error occurred")
+//            onBackPressed()
 //        }
-
-
-        for (i in 0..items.lastIndex) {
-            val x = items[i].getDay().toFloat()
-            val y = items[i].priceHigh
-            entries.add(Entry(x, y))
-        }
-
-
-        val dataSet = LineDataSet(entries, "Price USD")
-        dataSet.lineWidth = 3f
-        dataSet.color = Color.rgb(29, 247, 14)
-
-        val lineData = LineData(dataSet)
-        lineChart.data = lineData
-        lineChart.invalidate()
+//
+//        val entries = ArrayList<Entry>()
+//
+////        for (i in 0..20){
+////            entries.add(Entry(i.toFloat(), Random().nextFloat()))
+////        }
+//
+//
+//        for (i in 0..items.lastIndex) {
+//            val x = items[i].getDay().toFloat()
+//            val y = items[i].priceHigh
+//            entries.add(Entry(x, y))
+//        }
+//
+//
+//        val dataSet = LineDataSet(entries, "Price USD")
+//        dataSet.lineWidth = 3f
+//        dataSet.color = Color.rgb(29, 247, 14)
+//
+//        val lineData = LineData(dataSet)
+//        lineChart.data = lineData
+//        lineChart.invalidate()
     }
 
     override fun showProgress(show: Boolean) {
         if (show) {
             progress.visibility = VISIBLE
-            lineChart.visibility = GONE
+//            lineChart.visibility = GONE
         } else {
             progress.visibility = GONE
         }
@@ -102,7 +104,9 @@ class TickerInfoActivity : AppCompatActivity(), fogelao.com.github.coinmarket.pr
         swipeRefreshLayout.visibility = if (show) VISIBLE else GONE
     }
 
-    override fun showMessage(message: String) {
+    override fun showError(message: String) {
         toast(message)
     }
+
+
 }

@@ -1,15 +1,12 @@
-package fogelao.com.github.coinmarket.presentation.main
+package fogelao.com.github.coinmarket.presentation.ticker.graph
 
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import fogelao.com.github.coinmarket.entity.view.TickerView
+import fogelao.com.github.coinmarket.entity.api.graph.GraphItem
 import fogelao.com.github.coinmarket.ui.BaseView
 
 
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface MainView : BaseView {
-    fun showTickers(tickerApis: List<TickerView>)
-
-    fun showRefreshing(show: Boolean)
-
+interface GraphView : BaseView {
+    fun showGraph(items: List<GraphItem>)
 }

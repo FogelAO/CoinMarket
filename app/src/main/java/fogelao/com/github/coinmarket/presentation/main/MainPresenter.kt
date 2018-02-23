@@ -31,7 +31,7 @@ class MainPresenter : BasePresenter<MainView>() {
                 .doAfterTerminate { viewState.showRefreshing(false) }
                 .subscribe(
                         { viewState.showTickers(it) },
-                        { viewState.showMessage(it.message ?: "Error") }
+                        { viewState.showError(it.message ?: "Error") }
                 )
                 .connect()
     }
@@ -44,7 +44,7 @@ class MainPresenter : BasePresenter<MainView>() {
                 .doAfterTerminate { viewState.showProgress(false) }
                 .subscribe(
                         { viewState.showTickers(it) },
-                        { viewState.showMessage(it.message ?: "Error"); Log.w(TAG, it) }
+                        { viewState.showError(it.message ?: "Error"); Log.w(TAG, it) }
                 )
                 .connect()
     }

@@ -2,6 +2,7 @@ package fogelao.com.github.coinmarket.di.module
 
 import dagger.Module
 import dagger.Provides
+import fogelao.com.github.coinmarket.model.data.api.coinmarket.GraphApi
 import fogelao.com.github.coinmarket.model.data.api.hisapi.HistoryApi
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -21,6 +22,17 @@ class HistoryModule {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(HistoryApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideCoinMarketGraph(): GraphApi {
+        return Retrofit.Builder()
+                .baseUrl(GraphApi.BASE_URL)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(GraphApi::class.java)
     }
 
 

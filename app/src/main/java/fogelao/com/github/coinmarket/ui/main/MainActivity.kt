@@ -13,7 +13,7 @@ import fogelao.com.github.coinmarket.entity.view.TickerView
 import fogelao.com.github.coinmarket.extensions.toast
 import fogelao.com.github.coinmarket.presentation.main.MainPresenter
 import fogelao.com.github.coinmarket.presentation.main.MainView
-import fogelao.com.github.coinmarket.ui.graph.TickerInfoActivity
+import fogelao.com.github.coinmarket.ui.ticker.TickerInfoActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), MainView {
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), MainView {
         }
     }
 
-    override fun showMessage(message: String) {
+    override fun showError(message: String) {
         toast(message)
     }
 

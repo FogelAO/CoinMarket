@@ -10,6 +10,8 @@ class HistoryInteractor @Inject constructor(private val repository: TickerReposi
 
     fun getHistory(symbolId: String, periodId: String, timeStart: String) = repository.getHistory(symbolId, periodId, timeStart)
 
+    fun getGraphData(symbolId: String, start: Long, end: Long) = repository.getGraphData(symbolId, start, end).map { t -> t.priceUsd }
+
 
     private fun mapToEntries(items: List<HistoryItem>): List<Entry> {
         val entries = ArrayList<Entry>()
@@ -22,6 +24,5 @@ class HistoryInteractor @Inject constructor(private val repository: TickerReposi
 
         return entries
     }
-
 
 }

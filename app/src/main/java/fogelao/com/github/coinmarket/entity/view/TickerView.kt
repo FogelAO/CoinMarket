@@ -12,5 +12,10 @@ data class TickerView(
         val priceBtc: Double,
         val percentChange_24h: Double
 ) :Serializable{
+    companion object {
+        const val TAG = "TickerView"
+    }
+
+
     fun get24hVec() = percentChange_24h > 0
 }

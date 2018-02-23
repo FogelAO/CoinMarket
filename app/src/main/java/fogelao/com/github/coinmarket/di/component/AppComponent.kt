@@ -6,6 +6,7 @@ import fogelao.com.github.coinmarket.di.module.HistoryModule
 import fogelao.com.github.coinmarket.di.module.TickerModule
 import fogelao.com.github.coinmarket.presentation.main.MainPresenter
 import fogelao.com.github.coinmarket.presentation.ticker.TickerPresenter
+import fogelao.com.github.coinmarket.presentation.ticker.graph.GraphPresenter
 import javax.inject.Singleton
 
 
@@ -15,4 +16,6 @@ interface AppComponent {
     fun inject(mainPresenter: MainPresenter)
 
     fun inject(tickerPresenter: TickerPresenter)
+
+    fun inject(graphPresenter: GraphPresenter)
 }

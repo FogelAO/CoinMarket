@@ -2,7 +2,9 @@ package fogelao.com.github.coinmarket.model.repository
 
 import fogelao.com.github.coinmarket.entity.api.HistoryItem
 import fogelao.com.github.coinmarket.entity.api.TickerApi
+import fogelao.com.github.coinmarket.entity.api.graph.GraphResponse
 import fogelao.com.github.coinmarket.model.data.api.coinmarket.CoinMarketApi
+import fogelao.com.github.coinmarket.model.data.api.coinmarket.GraphApi
 import fogelao.com.github.coinmarket.model.data.api.hisapi.HistoryApi
 import fogelao.com.github.coinmarket.model.data.storage.Prefs
 import fogelao.com.github.coinmarket.model.data.storage.ticker.TickerDAO
@@ -17,6 +19,7 @@ import javax.inject.Inject
 class TickerRepository @Inject constructor(
         private val tickerApi: CoinMarketApi,
         private val historyApi: HistoryApi,
+        private val graphApiApi: GraphApi,
         private val tickerDB: TickerDAO,
         private val prefs: Prefs,
         private val schedulers: SchedulersProvider
@@ -50,6 +53,10 @@ class TickerRepository @Inject constructor(
             .observeOn(schedulers.ui())
 
     fun getHistory(symbolId: String, periodId: String, timeStart: String): Single<List<HistoryItem>> = historyApi.getHistory(symbolId, periodId, timeStart)
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+
+    fun getGraphData(symbolId: String, start: Long, end: Long): Single<GraphResponse> = graphApiApi.getGraphData(symbolId, start, end)
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
