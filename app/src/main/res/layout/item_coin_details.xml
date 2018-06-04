@@ -1,0 +1,34 @@
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="8dp">
+
+    <!--<TextView-->
+    <!--android:id="@+id/symbolView"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:textColor="@color/black"-->
+    <!--android:textSize="20sp"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--tools:text="BTC"/>-->
+
+    <TextView
+        android:id="@+id/priceView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="8327(USD)"/>
+
+    <TextView
+        android:id="@+id/lastUpdateView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="20.05.2018 16:15"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/priceView"/>
+
+</android.support.constraint.ConstraintLayout>

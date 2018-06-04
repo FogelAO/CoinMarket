@@ -1,51 +1,65 @@
 package fogelao.com.github.coinmarket.presentation.main
 
-import android.util.Log
+import android.os.Bundle
 import com.arellomobile.mvp.InjectViewState
-import fogelao.com.github.coinmarket.di.DI
-import fogelao.com.github.coinmarket.model.interactor.TickerInteractor
-import fogelao.com.github.coinmarket.presentation.global.BasePresenter
+import fogelao.com.github.coinmarket.di.Scopes
+import fogelao.com.github.coinmarket.entity.coin.CoinView
+import fogelao.com.github.coinmarket.model.interactor.coin.CoinInteractor
+import fogelao.com.github.coinmarket.model.system.ResourceManager
+import fogelao.com.github.coinmarket.presentation.LoadingListItem
+import fogelao.com.github.coinmarket.presentation.PlaceholderListItem
+import fogelao.com.github.coinmarket.presentation.base.BasePresenter
+import fogelao.com.github.coinmarket.presentation.view.main.MainView
+import fogelao.com.github.coinmarket.ui.Screens
+import ru.terrakok.cicerone.Router
+import timber.log.Timber
+import toothpick.Toothpick
+import toothpick.config.Module
 import javax.inject.Inject
 
-
+/**
+ * @author Fogel Artem on 14.05.2018.
+ */
 @InjectViewState
-class MainPresenter : BasePresenter<MainView>() {
-    companion object {
-        val TAG = MainPresenter::class.java.simpleName
-    }
-
-
-    @Inject
-    lateinit var tickerInteractor: TickerInteractor
+class MainPresenter @Inject constructor(
+        private val router: Router,
+        val resourceManager: ResourceManager,
+        private val interactor: CoinInteractor) : BasePresenter<MainView>() {
 
     override fun onFirstViewAttach() {
-        DI.componentManager().appComponent.inject(this)
-
-        getAllTickers()
-    }
-
-    fun refresh() {
-        tickerInteractor
-                .refreshAllTickers()
-                .doOnSubscribe { viewState.showRefreshing(true) }
-                .doAfterTerminate { viewState.showRefreshing(false) }
+        interactor.getAll()
+                .doOnSubscribe { showLoading() }
                 .subscribe(
-                        { viewState.showTickers(it) },
-                        { viewState.showError(it.message ?: "Error") }
+                        { viewState.showItems(it) },
+                        {
+                            Timber.e(it)
+                            showError()
+                        }
                 )
                 .connect()
+
     }
 
-
-    private fun getAllTickers() {
-        tickerInteractor
-                .getAllTickers()
-                .doOnSubscribe { viewState.showProgress(true) }
-                .doAfterTerminate { viewState.showProgress(false) }
-                .subscribe(
-                        { viewState.showTickers(it) },
-                        { viewState.showError(it.message ?: "Error"); Log.w(TAG, it) }
+    fun onCoinClicked(coinView: CoinView, bundle: Bundle?) {
+        viewState.showError("${coinView.coinName} clicked!")
+        Toothpick.openScopes(Scopes.SERVER_SCOPE, Scopes.COIN_SCOPE)
+                .installModules(
+                        object : Module() {
+                            init {
+                                bind(CoinView::class.java).toInstance(coinView)
+                            }
+                        }
                 )
-                .connect()
+
+        router.navigateTo(Screens.COIN_FLOW)
+    }
+
+    private fun showLoading() {
+        viewState.showItems(listOf(LoadingListItem()))
+    }
+
+    private fun showError() {
+        viewState.showItems(listOf(PlaceholderListItem()))
+        viewState.showError("Error")
     }
 }

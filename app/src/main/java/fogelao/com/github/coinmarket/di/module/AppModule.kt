@@ -1,33 +1,24 @@
 package fogelao.com.github.coinmarket.di.module
 
-import android.arch.persistence.room.Room
 import android.content.Context
-import dagger.Module
-import dagger.Provides
-import fogelao.com.github.coinmarket.model.data.storage.AppDatabase
-import fogelao.com.github.coinmarket.model.data.storage.Prefs
-import fogelao.com.github.coinmarket.model.system.AppSchedulers
-import fogelao.com.github.coinmarket.model.system.SchedulersProvider
-import javax.inject.Singleton
+import fogelao.com.github.coinmarket.di.qualifier.AppCtx
+import fogelao.com.github.coinmarket.model.system.ResourceManager
+import ru.terrakok.cicerone.Cicerone
+import ru.terrakok.cicerone.NavigatorHolder
+import ru.terrakok.cicerone.Router
+import toothpick.config.Module
 
-@Module
-class AppModule(private val context: Context) {
+/**
+ * @author Fogel Artem on 14.05.2018.
+ */
+class AppModule(context: Context) : Module() {
 
-    @Singleton
-    @Provides
-    fun provideContext() = context
-
-    @Singleton
-    @Provides
-    fun provideSchedulersProvider(): SchedulersProvider = AppSchedulers()
-
-    @Singleton
-    @Provides
-    fun provideAppDatabase(): AppDatabase = Room.databaseBuilder(context, AppDatabase::class.java, "coin_market-db").build()
-
-    @Singleton
-    @Provides
-    fun provideTimePreferences(context: Context) = Prefs(context)
-
-
+    init {
+        bind(Context::class.java).withName(AppCtx::class.java).toInstance(context)
+        bind(ResourceManager::class.java).singletonInScope()
+        //Navigation
+        val cicerone = Cicerone.create(Router())
+        bind(Router::class.java).toInstance(cicerone.router)
+        bind(NavigatorHolder::class.java).toInstance(cicerone.navigatorHolder)
+    }
 }
