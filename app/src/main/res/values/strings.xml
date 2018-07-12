@@ -1,9 +1,14 @@
 <resources>
-	<string name="app_name">CoinMarket</string>
-    <string name="no_tickers">No tickers</string>
-    <!--Transitions-->
-    <string name="transition_name">name</string>
-    <string name="transition_symbol">symbol</string>
-    <string name="transition_image">image</string>
-    <string name="transition_rank">rank</string>
+  <string name="app_name">CoinMarket</string>
+  <string name="no_tickers">No tickers</string>
+  <!--Transitions-->
+  <string name="transition_name">name</string>
+  <string name="transition_symbol">symbol</string>
+  <string name="transition_image">image</string>
+  <string name="transition_rank">rank</string>
+  <string name="rank">Rank</string>
+  <string name="_1h">1h</string>
+  <string name="_24h">24h</string>
+  <string name="_7d">7d</string>
+  <string name="no_chart_data">No chart data available</string>
 </resources>

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import fogelao.com.github.coinmarket.R
 import fogelao.com.github.coinmarket.di.Scopes
+import fogelao.com.github.coinmarket.model.network.entity.market_cap.coin.MarketCapCoin
 import fogelao.com.github.coinmarket.ui.Screens
 import fogelao.com.github.coinmarket.ui.base.BaseActivity
 import fogelao.com.github.coinmarket.ui.main.MainActivity
@@ -37,7 +38,7 @@ class CoinActivity : BaseActivity() {
         }
 
         override fun createFragment(screenKey: String, data: Any?) = when (screenKey) {
-            Screens.COIN_DETAILS_SCREEN -> CoinDetailsFragment.newInstance()
+            Screens.COIN_DETAILS_SCREEN -> CoinDetailsFragment.newInstance(data as MarketCapCoin?)
             else -> throw RuntimeException("Screen: $screenKey not found")
         }
     }

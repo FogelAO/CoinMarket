@@ -14,15 +14,18 @@ import retrofit2.http.Query
  * @author Fogel Artem on 14.05.2018.
  */
 interface CoinApi {
+  companion object {
+    const val BASE_URL = "https://cryptocompare.com/"
+  }
 
-    @GET("api/data/coinlist/")
-    fun getAll(): Single<MapResponse<Coin>>
+  @GET("api/data/coinlist/")
+  fun getAll(currency: String = "USD"): Single<MapResponse<Coin>>
 
-    @GET("api/data/price/")
-    fun getPrice(@Query("fsym") symbol: String, @Query("tsyms") quote: String): Single<ListResponse<Price>>
+  @GET("api/data/price/")
+  fun getPrice(@Query("fsym") symbol: String, @Query("tsyms") quote: String): Single<ListResponse<Price>>
 
 
-    //TODO:
-    @GET("api/data/socialstats/")
-    fun getSocial(@Query("id") id: Int): Single<EntityResponse<SocialResponse>>
+  //TODO:
+  @GET("api/data/socialstats/")
+  fun getSocial(@Query("id") id: Int): Single<EntityResponse<SocialResponse>>
 }

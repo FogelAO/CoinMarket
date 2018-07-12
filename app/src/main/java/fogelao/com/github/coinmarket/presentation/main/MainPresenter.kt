@@ -1,10 +1,9 @@
 package fogelao.com.github.coinmarket.presentation.main
 
-import android.os.Bundle
 import com.arellomobile.mvp.InjectViewState
 import fogelao.com.github.coinmarket.di.Scopes
-import fogelao.com.github.coinmarket.entity.coin.CoinView
 import fogelao.com.github.coinmarket.model.interactor.coin.CoinInteractor
+import fogelao.com.github.coinmarket.model.network.entity.market_cap.coin.MarketCapCoin
 import fogelao.com.github.coinmarket.model.system.ResourceManager
 import fogelao.com.github.coinmarket.presentation.LoadingListItem
 import fogelao.com.github.coinmarket.presentation.PlaceholderListItem
@@ -22,44 +21,42 @@ import javax.inject.Inject
  */
 @InjectViewState
 class MainPresenter @Inject constructor(
-        private val router: Router,
-        val resourceManager: ResourceManager,
-        private val interactor: CoinInteractor) : BasePresenter<MainView>() {
+    private val router: Router,
+    private val resourceManager: ResourceManager,
+    private val interactor: CoinInteractor) : BasePresenter<MainView>() {
 
-    override fun onFirstViewAttach() {
-        interactor.getAll()
-                .doOnSubscribe { showLoading() }
-                .subscribe(
-                        { viewState.showItems(it) },
-                        {
-                            Timber.e(it)
-                            showError()
-                        }
-                )
-                .connect()
+  override fun onFirstViewAttach() {
+    interactor.getAll()
+        .doOnSubscribe { showLoading() }
+        .subscribe(
+            { viewState.showItems(it) },
+            {
+              Timber.e(it)
+              showError()
+            }
+        )
+        .connect()
+  }
 
-    }
+  fun onCoinClicked(coin: MarketCapCoin) {
+    Toothpick.openScopes(Scopes.SERVER_SCOPE, Scopes.COIN_SCOPE)
+        .installModules(
+            object : Module() {
+              init {
+                bind(MarketCapCoin::class.java).toInstance(coin)
+              }
+            }
+        )
 
-    fun onCoinClicked(coinView: CoinView, bundle: Bundle?) {
-        viewState.showError("${coinView.coinName} clicked!")
-        Toothpick.openScopes(Scopes.SERVER_SCOPE, Scopes.COIN_SCOPE)
-                .installModules(
-                        object : Module() {
-                            init {
-                                bind(CoinView::class.java).toInstance(coinView)
-                            }
-                        }
-                )
+    router.navigateTo(Screens.COIN_FLOW)
+  }
 
-        router.navigateTo(Screens.COIN_FLOW)
-    }
+  private fun showLoading() {
+    viewState.showItems(listOf(LoadingListItem()))
+  }
 
-    private fun showLoading() {
-        viewState.showItems(listOf(LoadingListItem()))
-    }
-
-    private fun showError() {
-        viewState.showItems(listOf(PlaceholderListItem()))
-        viewState.showError("Error")
-    }
+  private fun showError() {
+    viewState.showItems(listOf(PlaceholderListItem()))
+    viewState.showError("Error")
+  }
 }
